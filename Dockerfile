@@ -1,9 +1,26 @@
-FROM python:3.13.5-alpine@sha256:37b14db89f587f9eaa890e4a442a3fe55db452b69cca1403cc730bd0fbdc8aaf
+FROM minlag/mermaid-cli:11.6.0@sha256:700cf8a225584e9fecbfcf6ee0586ecc8b2c0a834de1898a5a8bf6f6dc270548
 LABEL maintainer="SBB Polarion Team <polarion-opensource@sbb.ch>"
 
-ARG WORKING_DIR=/app
+ARG WORKING_DIR="/opt/mermaid"
 # DO NOT CHANGE APP_IMAGE_VERSION --> It is controlled by the pipeline
 ARG APP_IMAGE_VERSION=0.0.0
+
+USER root
+
+# hadolint ignore=DL3008
+# hadolint ignore=DL3018
+RUN apk update && apk add --no-cache \
+    build-base \
+    python3 \
+    python3-dev \
+    py3-pip \
+    py3-setuptools \
+    py3-wheel \
+    py3-virtualenv
+
+ENV MERMAID_SERVICE_VERSION=${APP_IMAGE_VERSION}
+
+RUN mkdir -p ${WORKING_DIR}
 
 WORKDIR ${WORKING_DIR}
 
@@ -12,6 +29,27 @@ COPY ./app/ ${WORKING_DIR}/app/
 COPY ./poetry.lock ${WORKING_DIR}
 COPY ./pyproject.toml ${WORKING_DIR}
 
+COPY ./entrypoint.sh ${WORKING_DIR}
+
+RUN BUILD_TIMESTAMP="$(date -u +'%Y-%m-%dT%H:%M:%SZ')" && \
+    echo "${BUILD_TIMESTAMP}" > "${WORKING_DIR}/.build_timestamp"
+
+RUN chown -R mermaidcli:mermaidcli ${WORKING_DIR}
+
+USER mermaidcli
+
+RUN chmod +x ${WORKING_DIR}/entrypoint.sh
+
+# Create and configure logging directory
+RUN mkdir -p ${WORKING_DIR}/logs && \
+    chmod 777 ${WORKING_DIR}/logs
+
+ENV VIRTUAL_ENV=${WORKING_DIR}/.venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+
 RUN pip install --no-cache-dir -r "${WORKING_DIR}"/requirements.txt && poetry install --no-root --only main
 
-ENTRYPOINT [ "poetry", "run", "python", "-m", "app.app" ]
+EXPOSE 9084
+
+ENTRYPOINT [ "./entrypoint.sh" ]

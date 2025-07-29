@@ -1,0 +1,25 @@
+---
+services:
+  mermaid-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    init: true  # Enable init process (equivalent to using tini)
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}  # Can be DEBUG, INFO, WARNING, ERROR, CRITICAL
+      - PYTHONUNBUFFERED=1  # Ensures Python output is sent straight to container logs
+    volumes:
+      - mermaid_service_logs:/opt/mermaid/logs  # Use named volume for logs
+    ports:
+      - 9084:9084  # Adjust port as needed for your application
+    healthcheck:
+      test: CMD-SHELL curl -f http://localhost:9084/health || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+volumes:
+  mermaid_service_logs:
+    name: ${COMPOSE_PROJECT_NAME:-mermaid}_logs
+    driver: local

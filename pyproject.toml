@@ -1,13 +1,13 @@
 [project]
-name = "open-source-polarion-docker-repo-template"
+name = "mermaid-service"
 version = "0.0.0"  # the version is controlled by the pipeline
-description = ""
+description = "Service for https://github.com/mermaid-js/mermaid-cli"
 authors = [
     {name = "SBB Polarion Team", email = "polarion-opensource@sbb.ch"},
 ]
 license = "Apache License 2.0"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dynamic = ["dependencies"]
 # Dependencies moved back to [tool.poetry.dependencies] for Renovate compatibility
 # See: https://github.com/renovatebot/renovate/issues/33509
@@ -24,6 +24,7 @@ packages = [{include = "app"}]
 # this duplication and legacy format must be kept until Renovate support is added for [project.dependencies] for poetry-lock updates
 # for more information check comments above
 [tool.poetry.dependencies]
+python = ">=3.11"
 fastapi = "0.116.1"
 uvicorn = "0.35.0"
 requests = "2.32.4"
@@ -75,7 +76,10 @@ extend-select = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = [
-    "S101" # No assert rule (bandit)
+    "S101", # No assert rule (bandit)
+    "PLR2004", # No magic values (pylint)
+    "F405", # undefined-local-with-import-star-usage (pyflakes)
+    "F403", # No import * (pyflakes)
 ]
 
 [tool.ruff.format]
@@ -85,3 +89,5 @@ line-ending = "lf"
 explicit_package_bases = true
 disallow_untyped_defs = true
 exclude = "tests/.*"
+install_types = true
+non_interactive = true
