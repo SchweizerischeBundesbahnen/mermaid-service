@@ -1,4 +1,4 @@
-FROM minlag/mermaid-cli:11.6.0@sha256:700cf8a225584e9fecbfcf6ee0586ecc8b2c0a834de1898a5a8bf6f6dc270548
+FROM minlag/mermaid-cli:11.9.0@sha256:ed8df1d6ce4049724121f3e3f76c0d268b717d80483acca16fd37783de941879
 LABEL maintainer="SBB Polarion Team <polarion-opensource@sbb.ch>"
 
 ARG WORKING_DIR="/opt/mermaid"
