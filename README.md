@@ -1,45 +1,47 @@
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template&metric=bugs)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template&metric=coverage)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template)
-[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_open-source-polarion-docker-repo-template)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_mermaid-service&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_mermaid-service)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_mermaid-service&metric=bugs)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_mermaid-service)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_mermaid-service&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_mermaid-service)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_mermaid-service&metric=coverage)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_mermaid-service)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_mermaid-service&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_mermaid-service)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_mermaid-service&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_mermaid-service)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_mermaid-service&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_mermaid-service)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_mermaid-service&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_mermaid-service)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_mermaid-service&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_mermaid-service)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=SchweizerischeBundesbahnen_mermaid-service&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=SchweizerischeBundesbahnen_mermaid-service)
 
-# <<docker-image-name>> Service
+# Mermaid Service
 
-<< Short Description >>
+A dockerized service providing a REST API interface to leverage [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli)'s functionality for converting Mermaid diagrams to SVG.
 
 ## Features
 
-<< List of features >>
+- Simple REST API to access [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli)
+- Compatible with amd64 and arm64 architectures
+- Easily deployable via Docker
 
 ## Getting Started
 
 ### Installation
 
-To install the latest version of the <<docker-image-name>> Service, run the following command:
+To install the latest version of the Mermaid Service, run the following command:
 
 ```bash
-docker pull ghcr.io/schweizerischebundesbahnen/<<docker-image-name>>:latest
+docker pull ghcr.io/schweizerischebundesbahnen/mermaid-service:latest
 ```
 
 ### Running the Service
 
-To start the <<docker-image-name>> service container, execute:
+To start the Mermaid service container, execute:
 
 ```bash
   docker run --detach \
     --init \
-    --publish <<port>>:<<port>> \
-    --name <<docker-image-name>> \
-    ghcr.io/schweizerischebundesbahnen/<<docker-image-name>>:latest
+    --publish 9084:9084 \
+    --name mermaid-service \
+    ghcr.io/schweizerischebundesbahnen/mermaid-service:latest
 ```
 
-The service will be accessible on port <<port>>.
+The service will be accessible on port 9084.
 
 > **Important**: The `--init` flag enables Docker's built-in init process which handles signal forwarding and zombie process reaping. This is required for proper operation of the service.
 
@@ -47,7 +49,7 @@ The service will be accessible on port <<port>>.
 
 The service includes a robust logging system with the following features:
 
-- Log files are stored in `/opt/<<docker-image-name>>/logs` directory
+- Log files are stored in `/opt/mermaid/logs` directory
 - Log level can be configured via `LOG_LEVEL` environment variable (default: INFO)
 - Log format: `timestamp - logger name - log level - message`
 - Each service start creates a new timestamped log file
@@ -56,11 +58,11 @@ To customize logging when running the container:
 
 ```bash
 docker run --detach \
-  --publish <<port>>:<<port>> \
-  --name <<docker-image-name>> \
+  --publish 9084:9084 \
+  --name mermaid-service \
   --env LOG_LEVEL=DEBUG \
-  --volume /path/to/local/logs:/opt/<<docker-image-name>>/logs \
-  ghcr.io/schweizerischebundesbahnen/<<docker-image-name>>:latest
+  --volume /path/to/local/logs:/opt/mermaid/logs \
+  ghcr.io/schweizerischebundesbahnen/mermaid-service:latest
 ```
 
 Available log levels:
@@ -76,7 +78,7 @@ Available log levels:
 To extend or customize the service, use it as a base image in the Dockerfile:
 
 ```Dockerfile
-FROM ghcr.io/schweizerischebundesbahnen/<<docker-image-name>>:latest
+FROM ghcr.io/schweizerischebundesbahnen/mermaid-service:latest
 ```
 
 ### Using Docker Compose
@@ -99,7 +101,7 @@ To build the Docker image from the source with a custom version, use:
   docker build \
     --build-arg APP_IMAGE_VERSION=0.0.0 \
     --file Dockerfile \
-    --tag <<docker-image-name>>:0.0.0 .
+    --tag mermaid-service:0.0.0 .
 ```
 
 Replace 0.0.0 with the desired version number.
@@ -110,9 +112,9 @@ To start the Docker container with your custom-built image:
 
 ```bash
   docker run --detach \
-    --publish 9080:9080 \
-    --name <<docker-container-name>> \
-    <<docker-image-name>>:0.0.0
+    --publish 9084:9084 \
+    --name mermaid-service \
+    mermaid-service:0.0.0
 ```
 
 ### Stopping the Container
@@ -120,7 +122,7 @@ To start the Docker container with your custom-built image:
 To stop the running container, execute:
 
 ```bash
-  docker container stop <<docker-container-name>>
+  docker container stop mermaid-service
 ```
 
 ### Testing
@@ -132,7 +134,7 @@ The container-structure-test tool is used to verify that the Docker image meets 
 Before running the following command, ensure that the `container-structure-test` tool is installed. You can find installation instructions in the [official documentation](https://github.com/GoogleContainerTools/container-structure-test).
 
 ```bash
-container-structure-test test --image <<docker-container-name>>:0.0.0 --config ./tests/container/container-structure-test.yaml
+container-structure-test test --image mermaid-service:0.0.0 --config ./tests/container/container-structure-test.yaml
 ```
 
 #### grype
@@ -144,7 +146,7 @@ To scan the Docker image for vulnerabilities, you can use Grype. First, ensure t
 Then run the vulnerability scan on your image:
 
 ```bash
-grype <<docker-container-name>>:0.0.0
+grype mermaid-service:0.0.0
 ```
 
 #### tox
@@ -166,7 +168,7 @@ poetry run pytest
 
 ```bash
 # a specific test
-poetry run pytest tests/test_app.py -v
+poetry run pytest tests/test_schemas.py -v
 ```
 
 #### pre-commit
