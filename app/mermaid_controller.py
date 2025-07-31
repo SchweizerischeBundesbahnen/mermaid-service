@@ -30,9 +30,8 @@ async def version() -> dict[str, str | None]:
     "/convert",
     responses={400: {"content": {"text/plain": {}}, "description": "Invalid Input"}, 500: {"content": {"text/plain": {}}, "description": "Internal SVG Conversion Error"}},
 )
-async def convert_html(
+async def convert(
     request: Request,
-    encoding: str = "utf-8",
 ) -> Response:
     """
     Convert MMD to SVG
@@ -42,7 +41,7 @@ async def convert_html(
     mmdc_bin = os.getenv("MMDC")
 
     try:
-        mmd = (await request.body()).decode(encoding)
+        mmd = (await request.body()).decode("utf-8")
 
         if not mmdc_bin:
             raise FileNotFoundError("Environment variable MMDC is not set or empty")
@@ -50,30 +49,7 @@ async def convert_html(
         if not mmd.strip():
             raise AssertionError("Empty request body")
 
-        # Create temporary files for Mermaid input and SVG output
-        # Using tempfile.NamedTemporaryFile ensures unique names and handles cleanup
-        with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".mmd", encoding="utf-8") as mmd_input_file:
-            mmd_input_file.write(mmd)
-            mmd_input_filepath = mmd_input_file.name
-
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".svg") as svg_output_file:
-            svg_output_filepath = svg_output_file.name
-
-        mmd_input_file_path = Path(mmd_input_filepath)
-        svg_output_file_path = Path(svg_output_filepath)
-
-        # Construct the command to call mermaid-cli
-        # -i: input file, -o: output file
-        # -p /puppeteer-config.json: Include the Puppeteer config file from the base image
-        command = [mmdc_bin, "-i", str(mmd_input_file_path), "-o", str(svg_output_file_path), "-p", "/puppeteer-config.json"]
-
-        # Execute the command
-        # capture_output=True captures stdout and stderr
-        # text=True decodes stdout/stderr as text
-        subprocess.run(command, capture_output=True, text=True, check=True)  # noqa: S603 we trust the command
-
-        # Read the generated SVG content
-        svg_content = svg_output_file_path.read_text(encoding="utf-8")
+        mmd_input_filepath, svg_output_filepath, svg_content = convert_mmd_to_svg(mmdc_bin, mmd)
 
         return Response(svg_content, media_type="image/svg+xml", status_code=200)
 
@@ -92,11 +68,41 @@ async def convert_html(
     except Exception as e:
         return process_error(e, "Unexpected error due converting to SVG", 500)
     finally:
-        # Clean up temporary files
-        if mmd_input_filepath and Path(mmd_input_filepath).exists():
-            Path(mmd_input_filepath).unlink()
-        if svg_output_filepath and Path(svg_output_filepath).exists():
-            Path(svg_output_filepath).unlink()
+        clean_up_tmp_files(mmd_input_filepath, svg_output_filepath)
+
+
+def clean_up_tmp_files(mmd_input_filepath: str | None, svg_output_filepath: str | None) -> None:
+    for path in (mmd_input_filepath, svg_output_filepath):
+        if path:
+            file = Path(path)
+            if file.exists():
+                file.unlink()
+
+
+def convert_mmd_to_svg(mmdc_bin: str, mmd: str) -> tuple[str, str, str]:
+    # Create temporary files for Mermaid input and SVG output
+    with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".mmd", encoding="utf-8") as mmd_input_file:
+        mmd_input_file.write(mmd)
+        mmd_input_filepath = mmd_input_file.name
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".svg") as svg_output_file:
+        svg_output_filepath = svg_output_file.name
+
+    # Construct the command to call mermaid-cli
+    # -i: input file, -o: output file
+    # -p /puppeteer-config.json: Include the Puppeteer config file from the base image
+    command = [mmdc_bin, "-i", mmd_input_filepath, "-o", svg_output_filepath, "-p", "/puppeteer-config.json"]
+
+    # Execute the command
+    # capture_output=True captures stdout and stderr
+    # text=True decodes stdout/stderr as text
+    subprocess.run(command, capture_output=True, text=True, check=True)  # noqa: S603 we trust the command
+
+    # Read the generated SVG content
+    with Path(svg_output_filepath).open(encoding="utf-8") as f:
+        svg_content = f.read()
+
+    return mmd_input_filepath, svg_output_filepath, svg_content
 
 
 def process_error(e: Exception, err_msg: str, status: int) -> Response:
