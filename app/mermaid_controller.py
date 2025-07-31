@@ -68,11 +68,15 @@ async def convert(
     except Exception as e:
         return process_error(e, "Unexpected error due converting to SVG", 500)
     finally:
-        # Clean up temporary files
-        if mmd_input_filepath and Path(mmd_input_filepath).exists():
-            Path(mmd_input_filepath).unlink()
-        if svg_output_filepath and Path(svg_output_filepath).exists():
-            Path(svg_output_filepath).unlink()
+        clean_up_tmp_files(mmd_input_filepath, svg_output_filepath)
+
+
+def clean_up_tmp_files(mmd_input_filepath: str | None, svg_output_filepath: str | None) -> None:
+    for path in (mmd_input_filepath, svg_output_filepath):
+        if path:
+            file = Path(path)
+            if file.exists():
+                file.unlink()
 
 
 def convert_mmd_to_svg(mmdc_bin: str, mmd: str) -> tuple[str, str, str]:
