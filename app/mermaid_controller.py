@@ -30,9 +30,7 @@ async def version() -> dict[str, str | None]:
     "/convert",
     responses={400: {"content": {"text/plain": {}}, "description": "Invalid Input"}, 500: {"content": {"text/plain": {}}, "description": "Internal SVG Conversion Error"}},
 )
-async def convert(
-    request: Request,
-) -> Response:
+async def convert(request: Request) -> Response:
     """
     Convert MMD to SVG
     """

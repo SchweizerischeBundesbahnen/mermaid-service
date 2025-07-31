@@ -1,0 +1,94 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FastAPI",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/version": {
+      "get": {
+        "summary": "Version",
+        "description": "Get version information",
+        "operationId": "version_version_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionSchema"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/convert": {
+      "post": {
+        "summary": "Convert",
+        "description": "Convert MMD to SVG",
+        "operationId": "convert_convert_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input",
+            "content": {
+              "text/plain": {}
+            }
+          },
+          "500": {
+            "description": "Internal SVG Conversion Error",
+            "content": {
+              "text/plain": {}
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "VersionSchema": {
+        "properties": {
+          "python": {
+            "type": "string",
+            "title": "Python",
+            "description": "Python version"
+          },
+          "mermaidCli": {
+            "type": "string",
+            "title": "Mermaidcli",
+            "description": "Mermaid CLI version"
+          },
+          "mermaidService": {
+            "type": "string",
+            "title": "Mermaidservice",
+            "description": "Service version"
+          },
+          "timestamp": {
+            "type": "string",
+            "title": "Timestamp",
+            "description": "Build timestamp"
+          }
+        },
+        "type": "object",
+        "required": [
+          "python",
+          "mermaidCli",
+          "mermaidService",
+          "timestamp"
+        ],
+        "title": "VersionSchema",
+        "description": "Schema for response /version"
+      }
+    }
+  }
+}
