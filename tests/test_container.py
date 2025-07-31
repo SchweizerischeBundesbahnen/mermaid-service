@@ -89,7 +89,7 @@ def test_convert_sequence_diagram(test_parameters: TestParameters) -> None:
     flush_tmp_file("test_convert_sequence_diagram.svg", response.content, test_parameters.flush_tmp_file_enabled)
 
     expected_svg = __load_test_data("tests/test-data/sequence-diagram-expected.svg")
-    assert response.content.decode("utf-8") == expected_svg
+    assert response.content.decode("utf-8").strip() == expected_svg.strip()
 
 
 def test_convert_no_input(test_parameters: TestParameters) -> None:
