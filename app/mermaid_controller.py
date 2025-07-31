@@ -1,10 +1,11 @@
+import asyncio
 import logging
 import os
 import platform
-import subprocess
 import tempfile
 from pathlib import Path
 
+import anyio
 import uvicorn
 from fastapi import FastAPI, Request, Response
 
@@ -30,10 +31,7 @@ async def version() -> dict[str, str | None]:
     "/convert",
     responses={400: {"content": {"text/plain": {}}, "description": "Invalid Input"}, 500: {"content": {"text/plain": {}}, "description": "Internal SVG Conversion Error"}},
 )
-async def convert_html(
-    request: Request,
-    encoding: str = "utf-8",
-) -> Response:
+async def convert(request: Request) -> Response:
     """
     Convert MMD to SVG
     """
@@ -42,7 +40,7 @@ async def convert_html(
     mmdc_bin = os.getenv("MMDC")
 
     try:
-        mmd = (await request.body()).decode(encoding)
+        mmd = (await request.body()).decode("utf-8")
 
         if not mmdc_bin:
             raise FileNotFoundError("Environment variable MMDC is not set or empty")
@@ -50,30 +48,20 @@ async def convert_html(
         if not mmd.strip():
             raise AssertionError("Empty request body")
 
-        # Create temporary files for Mermaid input and SVG output
-        # Using tempfile.NamedTemporaryFile ensures unique names and handles cleanup
-        with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".mmd", encoding="utf-8") as mmd_input_file:
-            mmd_input_file.write(mmd)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mmd") as mmd_input_file:
             mmd_input_filepath = mmd_input_file.name
-
         with tempfile.NamedTemporaryFile(delete=False, suffix=".svg") as svg_output_file:
             svg_output_filepath = svg_output_file.name
 
-        mmd_input_file_path = Path(mmd_input_filepath)
-        svg_output_file_path = Path(svg_output_filepath)
+        # Create temporary files for Mermaid input and SVG output
+        async with await anyio.open_file(mmd_input_filepath, mode="w", encoding="utf-8") as f:
+            await f.write(mmd)
 
-        # Construct the command to call mermaid-cli
-        # -i: input file, -o: output file
-        # -p /puppeteer-config.json: Include the Puppeteer config file from the base image
-        command = [mmdc_bin, "-i", str(mmd_input_file_path), "-o", str(svg_output_file_path), "-p", "/puppeteer-config.json"]
-
-        # Execute the command
-        # capture_output=True captures stdout and stderr
-        # text=True decodes stdout/stderr as text
-        subprocess.run(command, capture_output=True, text=True, check=True)  # noqa: S603 we trust the command
+        await run_mermaid_cli(mmdc_bin, mmd_input_filepath, svg_output_filepath)
 
         # Read the generated SVG content
-        svg_content = svg_output_file_path.read_text(encoding="utf-8")
+        async with await anyio.open_file(svg_output_filepath, mode="r", encoding="utf-8") as f:
+            svg_content = await f.read()
 
         return Response(svg_content, media_type="image/svg+xml", status_code=200)
 
@@ -81,10 +69,9 @@ async def convert_html(
         return process_error(e, "Assertion error, check the request body", 400)
     except (UnicodeDecodeError, LookupError) as e:
         return process_error(e, "Cannot decode request body", 400)
-    except subprocess.CalledProcessError as e:
+    except RuntimeError as e:
         # If mmdc returns a non-zero exit code (error)
-        error_message = f"Mermaid CLI conversion failed. STDERR: {e.stderr}, STDOUT: {e.stdout}"
-        return process_error(e, error_message, 500)
+        return process_error(e, "Mermaid CLI conversion failed", 500)
     except FileNotFoundError as e:
         # If mmdc executable is not found
         error_message = f"Mermaid CLI (mmdc) not found. Ensure it's installed and in the PATH. Path attempted: {mmdc_bin}"
@@ -92,11 +79,37 @@ async def convert_html(
     except Exception as e:
         return process_error(e, "Unexpected error due converting to SVG", 500)
     finally:
-        # Clean up temporary files
-        if mmd_input_filepath and Path(mmd_input_filepath).exists():
-            Path(mmd_input_filepath).unlink()
-        if svg_output_filepath and Path(svg_output_filepath).exists():
-            Path(svg_output_filepath).unlink()
+        await clean_up_tmp_files(mmd_input_filepath, svg_output_filepath)
+
+
+async def clean_up_tmp_files(mmd_input_filepath: str | None, svg_output_filepath: str | None) -> None:
+    for path in [mmd_input_filepath, svg_output_filepath]:
+        try:
+            if path:
+                Path(path).unlink(missing_ok=True)
+        except Exception as cleanup_error:
+            logging.warning(f"Failed to delete temp file {path}: {cleanup_error}")
+
+
+async def run_mermaid_cli(mmdc_bin: str, input_path: str, output_path: str) -> None:
+    # Construct and execute the command to call mermaid-cli
+    # -i: input file, -o: output file
+    # -p /puppeteer-config.json: Include the Puppeteer config file from the base image
+    process = await asyncio.create_subprocess_exec(
+        mmdc_bin,
+        "-i",
+        input_path,
+        "-o",
+        output_path,
+        "-p",
+        "/puppeteer-config.json",
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    stdout, stderr = await process.communicate()
+
+    if process.returncode != 0:
+        raise RuntimeError(f"Mermaid CLI failed: {stderr.decode()}")
 
 
 def process_error(e: Exception, err_msg: str, status: int) -> Response:
