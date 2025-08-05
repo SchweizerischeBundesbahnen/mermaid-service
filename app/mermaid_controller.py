@@ -92,13 +92,16 @@ async def convert_with_styling(
     mmdc_bin = os.getenv("MMDC")
 
     try:
+        if not mmdc_bin:
+            raise FileNotFoundError("Environment variable MMDC is not set or empty")
+
         form = await request.form()
 
         mmd = form.get("mmd")
         css = form.get("css")
 
-        if not mmdc_bin:
-            raise FileNotFoundError("Environment variable MMDC is not set or empty")
+        if not isinstance(mmd, str) or not isinstance(css, str):
+            raise AssertionError("'mmd' and 'css' multipart form data should be strings")
 
         if not mmd.strip():
             raise AssertionError("Empty 'mmd' multipart form data")
