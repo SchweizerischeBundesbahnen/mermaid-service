@@ -28,7 +28,11 @@ async def version() -> dict[str, str | None]:
 
 @app.post(
     "/convert",
-    responses={400: {"content": {"text/plain": {}}, "description": "Invalid Input"}, 500: {"content": {"text/plain": {}}, "description": "Internal SVG Conversion Error"}},
+    responses = {
+        200: { "description": "Success", "content": {"image/svg+xml": {}}},
+        400: { "description": "Invalid Input", "content": {"text/plain": {}}},
+        500: { "description": "Internal SVG Conversion Error", "content": {"text/plain": {}}}
+    }
 )
 async def convert(request: Request) -> Response:
     """
@@ -64,7 +68,59 @@ async def convert(request: Request) -> Response:
         error_message = f"Mermaid CLI (mmdc) not found. Ensure it's installed and in the PATH. Path attempted: {mmdc_bin}"
         return process_error(e, error_message, 500)
     except Exception as e:
-        return process_error(e, "Unexpected error due converting to SVG", 500)
+        return process_error(e, "Unexpected error while converting to SVG", 500)
+    finally:
+        clean_up_tmp_files(mmd_input_filepath, svg_output_filepath)
+
+
+@app.post(
+    "/convert-with-styling",
+    responses = {
+        200: { "description": "Success", "content": {"image/svg+xml": {}}},
+        400: { "description": "Invalid Input", "content": {"text/plain": {}}},
+        500: { "description": "Internal SVG Conversion Error", "content": {"text/plain": {}}}
+    }
+)
+async def convert_with_styling(
+    request: Request,
+) -> Response:
+    """
+    Convert MMD to SVG taking into account passed styling information
+    """
+    mmd_input_filepath = None
+    svg_output_filepath = None
+    mmdc_bin = os.getenv("MMDC")
+
+    try:
+        form = await request.form()
+
+        mmd = form.get("mmd")
+        css = form.get("css")
+
+        if not mmdc_bin:
+            raise FileNotFoundError("Environment variable MMDC is not set or empty")
+
+        if not mmd.strip():
+            raise AssertionError("Empty 'mmd' multipart form data")
+
+        mmd_input_filepath, svg_output_filepath, svg_content = convert_mmd_to_svg(mmdc_bin, mmd, css)
+
+        return Response(svg_content, media_type="image/svg+xml", status_code=200)
+
+    except AssertionError as e:
+        return process_error(e, "Assertion error, check multipart form data of the request contains 'mmd' value", 400)
+    except (UnicodeDecodeError, LookupError) as e:
+        return process_error(e, "Cannot decode request body", 400)
+    except subprocess.CalledProcessError as e:
+        # If mmdc returns a non-zero exit code (error)
+        error_message = f"Mermaid CLI conversion failed. STDERR: {e.stderr}, STDOUT: {e.stdout}"
+        return process_error(e, error_message, 500)
+    except FileNotFoundError as e:
+        # If mmdc executable is not found
+        error_message = f"Mermaid CLI (mmdc) not found. Ensure it's installed and in the PATH. Path attempted: {mmdc_bin}"
+        return process_error(e, error_message, 500)
+    except Exception as e:
+        return process_error(e, "Unexpected error while converting to SVG", 500)
     finally:
         clean_up_tmp_files(mmd_input_filepath, svg_output_filepath)
 
@@ -77,19 +133,23 @@ def clean_up_tmp_files(mmd_input_filepath: str | None, svg_output_filepath: str 
                 file.unlink()
 
 
-def convert_mmd_to_svg(mmdc_bin: str, mmd: str) -> tuple[str, str, str]:
-    # Create temporary files for Mermaid input and SVG output
+def convert_mmd_to_svg(mmdc_bin: str, mmd: str, css: str = "") -> tuple[str, str, str]:
+    # Create temporary files for Mermaid input and CSS and SVG output
     with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".mmd", encoding="utf-8") as mmd_input_file:
         mmd_input_file.write(mmd)
         mmd_input_filepath = mmd_input_file.name
+
+    with tempfile.NamedTemporaryFile(mode="w+", delete=False, suffix=".css", encoding="utf-8") as css_file:
+        css_file.write(css)
+        css_filepath = css_file.name
 
     with tempfile.NamedTemporaryFile(delete=False, suffix=".svg") as svg_output_file:
         svg_output_filepath = svg_output_file.name
 
     # Construct the command to call mermaid-cli
-    # -i: input file, -o: output file
+    # -i: input file, -o: output file, --cssFile: CSS file
     # -p /puppeteer-config.json: Include the Puppeteer config file from the base image
-    command = [mmdc_bin, "-i", mmd_input_filepath, "-o", svg_output_filepath, "-p", "/puppeteer-config.json"]
+    command = [mmdc_bin, "-i", mmd_input_filepath, "-o", svg_output_filepath, "--cssFile", css_filepath, "-p", "/puppeteer-config.json"]
 
     # Execute the command
     # capture_output=True captures stdout and stderr
