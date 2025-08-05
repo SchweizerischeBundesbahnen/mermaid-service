@@ -28,11 +28,7 @@ async def version() -> dict[str, str | None]:
 
 @app.post(
     "/convert",
-    responses = {
-        200: { "description": "Success", "content": {"image/svg+xml": {}}},
-        400: { "description": "Invalid Input", "content": {"text/plain": {}}},
-        500: { "description": "Internal SVG Conversion Error", "content": {"text/plain": {}}}
-    }
+    responses={200: {"description": "Success", "content": {"image/svg+xml": {}}}, 400: {"description": "Invalid Input", "content": {"text/plain": {}}}, 500: {"description": "Internal SVG Conversion Error", "content": {"text/plain": {}}}},
 )
 async def convert(request: Request) -> Response:
     """
@@ -75,11 +71,7 @@ async def convert(request: Request) -> Response:
 
 @app.post(
     "/convert-with-styling",
-    responses = {
-        200: { "description": "Success", "content": {"image/svg+xml": {}}},
-        400: { "description": "Invalid Input", "content": {"text/plain": {}}},
-        500: { "description": "Internal SVG Conversion Error", "content": {"text/plain": {}}}
-    }
+    responses={200: {"description": "Success", "content": {"image/svg+xml": {}}}, 400: {"description": "Invalid Input", "content": {"text/plain": {}}}, 500: {"description": "Internal SVG Conversion Error", "content": {"text/plain": {}}}},
 )
 async def convert_with_styling(
     request: Request,
@@ -100,13 +92,13 @@ async def convert_with_styling(
         mmd = form.get("mmd")
         css = form.get("css")
 
-        if not isinstance(mmd, str) or not isinstance(css, str):
+        if not isinstance(mmd, str) or (css and not isinstance(css, str)):
             raise AssertionError("'mmd' and 'css' multipart form data should be strings")
 
         if not mmd.strip():
             raise AssertionError("Empty 'mmd' multipart form data")
 
-        mmd_input_filepath, svg_output_filepath, svg_content = convert_mmd_to_svg(mmdc_bin, mmd, css)
+        mmd_input_filepath, svg_output_filepath, svg_content = convert_mmd_to_svg(mmdc_bin, str(mmd), str(css))
 
         return Response(svg_content, media_type="image/svg+xml", status_code=200)
 
