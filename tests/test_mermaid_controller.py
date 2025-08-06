@@ -24,16 +24,7 @@ def test_version():
 def test_convert():
     os.environ["MMDC"] = test_script_path
     os.environ["MERMAID_SERVICE_VERSION"] = "test1"
-    with (
-        patch("subprocess.run") as mock_subprocess,
-        patch("pathlib.Path.open", create=True) as mock_path_open,
-        TestClient(app) as test_client
-    ):
-        mock_file = MagicMock()
-        mock_file.read.return_value = b"circle cx=\"50\" cy=\"50\" r=\"40\""
-        mock_path_open.return_value.__enter__.return_value = mock_file
-        mock_subprocess.return_value = MagicMock()
-
+    with TestClient(app) as test_client:
         result = test_client.post(
             "/convert"
         )
@@ -51,16 +42,8 @@ def test_convert():
 def test_convert_with_styling():
     os.environ["MMDC"] = test_script_path
     os.environ["MERMAID_SERVICE_VERSION"] = "test1"
-    with (
-        patch("subprocess.run") as mock_subprocess,
-        patch("pathlib.Path.open", create=True) as mock_path_open,
-        TestClient(app) as test_client
-    ):
-        mock_file = MagicMock()
-        mock_file.read.return_value = b"circle cx=\"50\" cy=\"50\" r=\"40\""
-        mock_path_open.return_value.__enter__.return_value = mock_file
-        mock_subprocess.return_value = MagicMock()
 
+    with TestClient(app) as test_client:
         result = test_client.post(
             "/convert-with-styling",
             data={},
@@ -71,8 +54,10 @@ def test_convert_with_styling():
         result = test_client.post(
             "/convert-with-styling",
             data={
-                "mmd": b"sequenceDiagram; participant Participant 3; actor Aktor 4; Participant 3->>Aktor 4: message"
+                "mmd": b"sequenceDiagram; participant Participant 3; actor Actor 4; Participant 3->>Actor 4: message",
+                "css": b".actor { fill: #aaaaaa; }"
             }
         )
         assert result.status_code == 200
         assert b"circle cx=\"50\" cy=\"50\" r=\"40\"" in result.content
+        assert b".actor { fill: #aaaaaa; }" in result.content
