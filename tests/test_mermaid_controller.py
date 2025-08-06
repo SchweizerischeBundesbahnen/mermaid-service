@@ -49,7 +49,16 @@ def test_convert_with_styling():
             data={},
         )
         assert result.status_code == 400
-        assert b"'mmd' and 'css' multipart form data should be strings" in result.content
+        assert b"Check multipart form data of the request contains 'mmd' value and it's a string" in result.content
+
+        result = test_client.post(
+            "/convert-with-styling",
+            data={
+                "mmd": b"unknownDiagram"
+            },
+        )
+        assert result.status_code == 500
+        assert b"CalledProcessError" in result.content
 
         result = test_client.post(
             "/convert-with-styling",

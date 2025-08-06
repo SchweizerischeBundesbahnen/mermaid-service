@@ -38,11 +38,21 @@ fi
 MMD=$(< "$INPUT_FILE")
 CSS=$(< "$CSS_FILE")
 
-cat <<EOF > "$OUTPUT_FILE"
+if [[ "$MMD" == *"flowchart"* ]]; then
+    cat <<EOF > "$OUTPUT_FILE"
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
+  <circle cx="50" cy="50" r="40" stroke="black" stroke-width="2" fill="red" />
+</svg>
+EOF
+elif [[ "$MMD" == *"sequenceDiagram"* ]]; then
+    cat <<EOF > "$OUTPUT_FILE"
 <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
   <circle cx="50" cy="50" r="40" stroke="black" stroke-width="2" fill="red" />
   $CSS
 </svg>
 EOF
+else
+  exit 2
+fi
 
 exit 0

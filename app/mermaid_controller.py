@@ -92,20 +92,15 @@ async def convert_with_styling(
         mmd = form.get("mmd")
         css = form.get("css")
 
-        if not isinstance(mmd, str) or (css and not isinstance(css, str)):
-            raise AssertionError("'mmd' and 'css' multipart form data should be strings")
-
-        if not mmd.strip():
-            raise AssertionError("Empty 'mmd' multipart form data")
+        if not isinstance(mmd, str) or mmd.strip() == "":
+            raise AssertionError("Check multipart form data of the request contains 'mmd' value and it's a string")
 
         mmd_input_filepath, svg_output_filepath, svg_content = convert_mmd_to_svg(mmdc_bin, str(mmd), str(css))
 
         return Response(svg_content, media_type="image/svg+xml", status_code=200)
 
     except AssertionError as e:
-        return process_error(e, "Assertion error, check multipart form data of the request contains 'mmd' value", 400)
-    except (UnicodeDecodeError, LookupError) as e:
-        return process_error(e, "Cannot decode request body", 400)
+        return process_error(e, "Assertion error, check multipart form data is valid", 400)
     except subprocess.CalledProcessError as e:
         # If mmdc returns a non-zero exit code (error)
         error_message = f"Mermaid CLI conversion failed. STDERR: {e.stderr}, STDOUT: {e.stdout}"
