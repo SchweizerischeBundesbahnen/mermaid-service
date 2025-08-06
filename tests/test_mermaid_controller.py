@@ -70,3 +70,19 @@ def test_convert_with_styling():
         assert result.status_code == 200
         assert b"circle cx=\"50\" cy=\"50\" r=\"40\"" in result.content
         assert b".actor { fill: #aaaaaa; }" in result.content
+
+
+def test_wrong_mmd_cli():
+    os.environ["MMDC"] = "fake_path"
+    os.environ["MERMAID_SERVICE_VERSION"] = "test1"
+
+    with TestClient(app) as test_client:
+        result = test_client.post(
+            "/convert-with-styling",
+            data={
+                "mmd": b"sequenceDiagram; participant Participant 3; actor Actor 4; Participant 3->>Actor 4: message",
+                "css": b".actor { fill: #aaaaaa; }"
+            }
+        )
+        assert result.status_code == 500
+        assert b"FileNotFoundError" in result.content
