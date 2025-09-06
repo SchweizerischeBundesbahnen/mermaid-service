@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/SchweizerischeBundesbahnen/mermaid-service/compare/v1.1.0...v1.1.1) (2025-09-06)
+
+
+### Bug Fixes
+
+* **deps:** update dependency requests to v2.32.5 ([2b0c984](https://github.com/SchweizerischeBundesbahnen/mermaid-service/commit/2b0c9848ab35c58ac47ea91882e8be4feb6a7b6c))
+
 ## [1.1.0](https://github.com/SchweizerischeBundesbahnen/mermaid-service/compare/v1.0.0...v1.1.0) (2025-08-12)
 
 
