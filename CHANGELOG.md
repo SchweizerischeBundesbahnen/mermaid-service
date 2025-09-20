@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.1](https://github.com/SchweizerischeBundesbahnen/mermaid-service/compare/v1.1.0...v1.1.1) (2025-09-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency fastapi to v0.116.2 ([582bfb4](https://github.com/SchweizerischeBundesbahnen/mermaid-service/commit/582bfb40b65e578bc0bfacc4ccf796c0dd34400f))
+* **deps:** update dependency requests to v2.32.5 ([2b0c984](https://github.com/SchweizerischeBundesbahnen/mermaid-service/commit/2b0c9848ab35c58ac47ea91882e8be4feb6a7b6c))
+* **deps:** update dependency uvicorn to v0.36.0 ([0c28dee](https://github.com/SchweizerischeBundesbahnen/mermaid-service/commit/0c28dee6f3b182df83ef07db00277bb13d401d6b))
+
 ## [1.1.0](https://github.com/SchweizerischeBundesbahnen/mermaid-service/compare/v1.0.0...v1.1.0) (2025-08-12)
 
 
