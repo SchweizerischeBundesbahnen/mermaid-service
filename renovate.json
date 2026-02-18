@@ -6,14 +6,32 @@
   "packageRules": [
     {
       "matchManagers": [
-        "pep621"
+        "dockerfile"
       ],
       "matchDatasources": [
-        "pypi"
+        "docker"
       ],
-      "semanticCommitType": "fix",
+      "semanticCommitType": "feat",
       "matchUpdateTypes": [
-        "patch"
+        "minor"
+      ],
+      "matchPackageNames": [
+        "minlag/mermaid-cli"
+      ]
+    },
+    {
+      "matchManagers": [
+        "dockerfile"
+      ],
+      "matchDatasources": [
+        "docker"
+      ],
+      "semanticCommitType": "feat!",
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchPackageNames": [
+        "minlag/mermaid-cli"
       ]
     }
   ]
