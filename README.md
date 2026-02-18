@@ -154,7 +154,7 @@ grype mermaid-service:0.0.0
 Tox automates testing in different Python environments, ensuring that the application works correctly across various Python versions and configurations. It helps maintain compatibility and provides a standardized way to run test suites, formatting checks, and other quality assurance processes.
 
 ```bash
-poetry run tox
+uv run tox
 ```
 
 #### pytest (for debugging)
@@ -163,12 +163,12 @@ Pytest is used for unit and integration testing of the application code. These t
 
 ```bash
 # all tests
-poetry run pytest
+uv run pytest
 ```
 
 ```bash
 # a specific test
-poetry run pytest tests/test_schemas.py -v
+uv run pytest tests/test_schemas.py -v
 ```
 
 #### pre-commit
@@ -176,7 +176,7 @@ poetry run pytest tests/test_schemas.py -v
 Pre-commit hooks run automated checks on code before it's committed to the repository. This ensures consistent code style, formatting, and quality across the project. It helps catch common issues early in the development process, maintaining high code standards and reducing the need for style-related revisions during code reviews.
 
 ```bash
-poetry run pre-commit run --all
+uv run pre-commit run --all
 ```
 
 ### REST API
