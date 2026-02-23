@@ -1,5 +1,5 @@
+---
 name: Claude Code Review
-
 on:
   pull_request:
     types: [opened, synchronize, ready_for_review, reopened]
@@ -9,36 +9,32 @@ on:
     #   - "src/**/*.tsx"
     #   - "src/**/*.js"
     #   - "src/**/*.jsx"
-
 jobs:
   claude-review:
-    # Optional: Filter by PR author
-    # if: |
-    #   github.event.pull_request.user.login == 'external-contributor' ||
-    #   github.event.pull_request.user.login == 'new-developer' ||
-    #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
-
+    # Skip Claude review for Renovate, Dependabot PRs, and fork PRs
+    if: |
+      github.event.pull_request.user.login != 'renovate[bot]' &&
+      github.event.pull_request.user.login != 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.fork == false
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: read
       issues: read
       id-token: write
-
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           fetch-depth: 1
-
+          persist-credentials: false  # Security: don't persist credentials (was true)
       - name: Run Claude Code Review
         id: claude-review
-        uses: anthropics/claude-code-action@v1
+        uses: anthropics/claude-code-action@edd85d61533cbba7b57ed0ca4af1750b1fdfd3c4  # v1.0.55
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
-          plugins: 'code-review@claude-code-plugins'
-          prompt: '/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'
+          plugin_marketplaces: https://github.com/anthropics/claude-code.git
+          plugins: code-review@claude-code-plugins
+          prompt: /code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
-
