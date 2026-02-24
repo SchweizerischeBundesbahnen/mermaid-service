@@ -8,7 +8,9 @@ export MMDC
 MERMAID_CLI_VERSION="$(${MMDC} --version | awk '{print $1}')"
 export MERMAID_CLI_VERSION
 
-poetry run python -m app.mermaid_service_application &
+# The --no-sync flag is used because all dependencies are installed during the image build process.
+# The environment is assumed to be already synchronized, so runtime sync is unnecessary and skipped for faster startup.
+uv run --no-sync python -m app.mermaid_service_application &
 
 wait
 
