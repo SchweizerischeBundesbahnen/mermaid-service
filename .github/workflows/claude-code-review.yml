@@ -31,7 +31,6 @@ jobs:
         uses: anthropics/claude-code-action@35a9e0292d36f1186f5d842b14eb575074e8b450  # v1.0.57
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          use_sticky_comment: true
           prompt: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
@@ -57,18 +56,14 @@ jobs:
             GUIDELINES:
             - Use Read/Grep/Glob to search the codebase for context
             - The PR branch is already checked out
-            - Post review using inline comments for specific line issues
-            - Use `gh pr comment` for summary only
+            - Cite issues using GitHub links: https://github.com/${{ github.repository }}/blob/FULL_GIT_SHA/path/to/file#L1-L2
+            - Post the full review with `gh pr comment --repo ${{ github.repository }} --body "..."`
             - Only post GitHub comments — don't submit review text as messages
             FORMAT (be TERSE):
-            ## Issues Found
-
-            ### 🔴 Critical
-            - `file:line` - Problem [CLAUDE.md: "rule" if applicable] - Fix: specific solution
-
-            ### 🟡 Important
-            - `file:line` - Issue - Suggestion: specific fix
-            If NO issues found: "✅ No issues found. Checked for bugs and CLAUDE.md compliance."
+            ## ❌ Issues Found
+            1. [link] - Problem [CLAUDE.md: "rule" if applicable] - Fix: specific solution
+            2. [link] - Issue - Suggestion: specific fix
+            If NO issues found: "## ✅ No issues found. Checked for bugs and CLAUDE.md compliance."
           settings: |
             {
               "permissions": {
@@ -77,9 +72,8 @@ jobs:
                   "Bash(gh pr comment:*)",
                   "Bash(gh pr diff:*)",
                   "Bash(gh pr view:*)",
-                  "Bash(gh api:*)",
-                  "mcp__github_inline_comment__create_inline_comment"
+                  "Bash(gh api:*)"
                 ]
               }
             }
-          claude_args: --max-turns 20
+          claude_args: --max-turns 30
