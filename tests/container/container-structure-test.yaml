@@ -21,10 +21,12 @@ commandTests:
     command: uv
     args: [run, --no-sync, tox, --version]
     exitCode: 2
+    expectedError: ['Failed to spawn: `tox`']
   - name: Pytest should not be installed
     command: uv
     args: [run, --no-sync, pytest, --version]
     exitCode: 2
+    expectedError: ['Failed to spawn: `pytest`']
   - name: Log directory exists
     command: test
     args: [-d, /opt/mermaid/logs]
