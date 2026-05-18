@@ -2,36 +2,44 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Conventions (template-aligned)
+
+- Use `uv` for all Python tooling (`uv run tox`, `uv run pytest`, `uv sync`) — never `pip`, `python -m pip`, or bare tool invocations.
+- Always use `uv sync --locked` (CI and Dockerfile) — verifies lockfile is consistent with `pyproject.toml`; never `--frozen`.
+- Docker builds require `--build-arg APP_IMAGE_VERSION=<version>` for correct versioning; omitting it defaults to `0.0.0`.
+- Signed commits are required (GPG enforced via git config conditional includes).
+- Line length is 240 characters (configured in ruff) — do not reformat to shorter lengths.
+
 ## Commands
 
 ```bash
 # Install dependencies
-poetry install --with=dev,test
+uv sync --all-groups
 
 # Run all checks (lint + tests) — mirrors CI
-poetry run tox
+uv run tox
 
 # Lint and type-check only
-poetry run tox -e lint
+uv run tox -e lint
 
 # Tests with coverage only
-poetry run tox -e py311
+uv run tox -e test
 
 # Run a single test file or test
-poetry run pytest tests/test_mermaid_controller.py -v
-poetry run pytest tests/test_mermaid_controller.py::test_convert_success -v
+uv run pytest tests/test_mermaid_controller.py -v
+uv run pytest tests/test_mermaid_controller.py::test_convert_success -v
 
 # Formatting and linting separately
-poetry run ruff format
-poetry run ruff check
-poetry run mypy .
+uv run ruff format
+uv run ruff check
+uv run mypy .
 
 # Build and run the container locally
 docker build --build-arg APP_IMAGE_VERSION=0.0.0 -f Dockerfile -t mermaid-service:dev .
 docker-compose up -d
 ```
 
-Coverage must remain ≥ 80%. The `py311` tox environment enforces this automatically.
+Coverage must remain ≥ 80%. The `test` tox environment enforces this automatically.
 
 ## Architecture
 
@@ -57,7 +65,7 @@ This is a thin FastAPI wrapper around the [Mermaid CLI](https://github.com/merma
 
 ## Conventions
 
-**Dependencies:** Managed by Poetry. Dependencies are declared in `[tool.poetry.dependencies]` (not `[project.dependencies]`) due to a Renovate compatibility issue tracked in `pyproject.toml`. Do not migrate until that issue is resolved.
+**Dependencies:** Managed by [uv](https://docs.astral.sh/uv/). Runtime dependencies live in `[project.dependencies]`; dev/test groups live in `[dependency-groups]`. Python version is pinned via `.tool-versions` and `requires-python` in `pyproject.toml`.
 
 **Linting:** Ruff with a broad rule set (see `pyproject.toml`). Line length is 240. Tests are excluded from linting rules; `S101`, `PLR2004`, `F403`, `F405` are additionally ignored in test files. MyPy runs in strict mode on `app/` only.
 
