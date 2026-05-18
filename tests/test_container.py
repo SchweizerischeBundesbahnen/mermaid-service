@@ -71,8 +71,7 @@ def test_container_no_error_logs(test_parameters: TestParameters) -> None:
 def test_convert_flowchart(test_parameters: TestParameters) -> None:
     mmd = __load_test_data("tests/test-data/flowchart.mmd")
 
-    response = __send_request(base_url=test_parameters.base_url, request_session=test_parameters.request_session,
-                              data=mmd, print_error=True)
+    response = __send_request(base_url=test_parameters.base_url, request_session=test_parameters.request_session, data=mmd, print_error=True)
     assert response.status_code == 200
     flush_tmp_file("test_convert_flowchart.svg", response.content, test_parameters.flush_tmp_file_enabled)
 
@@ -83,8 +82,7 @@ def test_convert_flowchart(test_parameters: TestParameters) -> None:
 def test_convert_sequence_diagram(test_parameters: TestParameters) -> None:
     mmd = __load_test_data("tests/test-data/sequence-diagram.mmd")
 
-    response = __send_request(base_url=test_parameters.base_url, request_session=test_parameters.request_session,
-                              data=mmd, print_error=True)
+    response = __send_request(base_url=test_parameters.base_url, request_session=test_parameters.request_session, data=mmd, print_error=True)
     assert response.status_code == 200
     flush_tmp_file("test_convert_sequence_diagram.svg", response.content, test_parameters.flush_tmp_file_enabled)
 
@@ -94,8 +92,7 @@ def test_convert_sequence_diagram(test_parameters: TestParameters) -> None:
 
 def test_convert_no_input(test_parameters: TestParameters) -> None:
     wrong_data = " "
-    response = __send_request(base_url=test_parameters.base_url, request_session=test_parameters.request_session,
-                              data=wrong_data, print_error=False)
+    response = __send_request(base_url=test_parameters.base_url, request_session=test_parameters.request_session, data=wrong_data, print_error=False)
     assert response.status_code == 400
 
 
@@ -105,13 +102,11 @@ def __load_test_data(file_path: str) -> str:
         return content
 
 
-def __send_request(base_url: str, request_session: requests.Session, data, print_error,
-                   parameters=None) -> requests.Response:
+def __send_request(base_url: str, request_session: requests.Session, data, print_error, parameters=None) -> requests.Response:
     url = f"{base_url}/convert"
     headers = {"Accept": "*/*", "Content-Type": "text/plain; charset=utf-8"}
     try:
-        response = request_session.request(method="POST", url=url, headers=headers, data=data, verify=True,
-                                           params=parameters)
+        response = request_session.request(method="POST", url=url, headers=headers, data=data, verify=True, params=parameters)
         if response.status_code // 100 != 2 and print_error:
             logging.error(f"Error: Unexpected response: '{response}'")
             logging.error(f"Error: Response content: '{response.content}'")
