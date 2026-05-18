@@ -5,15 +5,19 @@ description = "Service for https://github.com/mermaid-js/mermaid-cli"
 authors = [
     {name = "SBB Polarion Team", email = "polarion-opensource@sbb.ch"},
 ]
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.14,<3.15"
 dependencies = [
     "fastapi==0.136.1",
     "uvicorn==0.47.0",
     "requests==2.34.2",
     "python-multipart==0.0.28",
 ]
+
+[project.urls]
+Homepage = "https://github.com/SchweizerischeBundesbahnen/mermaid-service"
+Repository = "https://github.com/SchweizerischeBundesbahnen/mermaid-service"
 
 [tool.uv]
 # Set to false because this project is an application, not a library
