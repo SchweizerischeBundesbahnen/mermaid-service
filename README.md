@@ -13,6 +13,11 @@
 
 A dockerized service providing a REST API interface to leverage [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli)'s functionality for converting Mermaid diagrams to SVG.
 
+> [!IMPORTANT]
+> **This repository is archived and read-only.**
+> The Polarion extension this service was built for is no longer being developed, so development of the service stops with it.
+> The source and the published image (`ghcr.io/schweizerischebundesbahnen/mermaid-service`) stay available as they are, but they will receive no further updates, including security ones.
+
 ## Features
 
 - Simple REST API to access [Mermaid CLI](https://github.com/mermaid-js/mermaid-cli)
