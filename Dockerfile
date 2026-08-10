@@ -1,7 +1,7 @@
 # Copy uv from official image
 FROM ghcr.io/astral-sh/uv:0.12.3@sha256:2d890623d310b57771ce840f0da5eed5fc6d657da05ffaa45d82797b53fa3abc AS uv-source
 
-FROM minlag/mermaid-cli:11.12.0@sha256:bad64c9d9ad917c8dfbe9d9e9c162b96f6615ff019b37058638d16eb27ce7783
+FROM minlag/mermaid-cli:11.16.1@sha256:eddb559ae44da41de9e1adfa04687516de53c26016b258fd7ab35c9999313d7e
 LABEL maintainer="SBB Polarion Team <polarion-opensource@sbb.ch>"
 
 # Copy uv binary from source stage
